@@ -10,7 +10,7 @@ ALLOWED_HOST = "tcmb-exchange-rates-api-tcmb-kuru.p.rapidapi.com"
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://rapidapi.com", "https://*.rapidapi.com"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
