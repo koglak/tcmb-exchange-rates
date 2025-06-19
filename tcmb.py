@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, Request
 import requests
 import xmltodict
 from datetime import datetime, date, timedelta
@@ -6,16 +6,25 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+ALLOWED_HOST = "tcmb-exchange-rates-api-tcmb-kuru.p.rapidapi.com"
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # RapidAPI gibi her yerden çağrı gelebilsin
+    allow_origins=["https://rapidapi.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-BASE_URL = "https://www.tcmb.gov.tr/kurlar"
+@app.middleware("http")
+async def enforce_rapidapi_only(request: Request, call_next):
+    # Header'larda x-rapidapi-host var mı kontrol et
+    rapidapi_host = request.headers.get("x-rapidapi-host")
+    if rapidapi_host != ALLOWED_HOST:
+        raise HTTPException(status_code=403, detail="Access forbidden: Use via RapidAPI only.")
+    return await call_next(request)
 
+BASE_URL = "https://www.tcmb.gov.tr/kurlar"
 
 def fetch_xml(date_param: datetime = None):
     today = date.today()
