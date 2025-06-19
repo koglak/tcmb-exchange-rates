@@ -2,8 +2,17 @@ from fastapi import FastAPI, Query, HTTPException
 import requests
 import xmltodict
 from datetime import datetime, date, timedelta
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],          # RapidAPI gibi her yerden çağrı gelebilsin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 BASE_URL = "https://www.tcmb.gov.tr/kurlar"
 
